@@ -1,0 +1,220 @@
+@SET RESFILE  Mo2Ti2C3
+@SET INPDIR   .
+@SET WRKDIR   .
+@SET RESTART 1 
+@SET  THERM_REST T
+@SET GUESS RESTART
+
+&GLOBAL 
+  PROJECT Mo2Ti2C3
+  RUN_TYPE MD     
+  IOLEVEL LOW       
+  WALLTIME 80000 
+  PREFERRED_DIAG_LIBRARY  ELPA
+&END GLOBAL
+
+&FORCE_EVAL
+  STRESS_TENSOR ANALYTICAL
+  METHOD Quickstep
+  &DFT
+    BASIS_SET_FILE_NAME BASIS_MOLOPT
+    POTENTIAL_FILE_NAME GTH_POTENTIALS            
+
+    CHARGE 0
+    UKS .FALSE.
+    MULTIPLICITY 1 
+
+    &MGRID
+       CUTOFF [Ry] 500 
+       NGRIDS 5
+    &END
+
+    &QS
+       METHOD GPW 
+       EPS_DEFAULT 1.0E-10 
+       EXTRAPOLATION ASPC
+       EXTRAPOLATION_ORDER 0 
+    &END
+
+    &POISSON
+       PERIODIC XYZ ! the default, gas phase systems should have 'NONE' and a wavelet solver
+    &END
+
+    ! use the OT METHOD for robust and efficient SCF, suitable for all non-metallic systems.
+
+    RESTART_FILE_NAME ${INPDIR}/${RESFILE}-RESTART.wfn
+
+    &SCF                              
+      IGNORE_CONVERGENCE_FAILURE
+      MAX_SCF 50
+      SCF_GUESS  ${GUESS}
+      EPS_SCF 1.0E-5 ! accuracy of the SCF procedure typically 1.0E-6 - 1.0E-7
+      &OT
+        ! an accurate preconditioner suitable also for larger systems
+        PRECONDITIONER FULL_SINGLE_INVERSE
+        ! the most robust choice (DIIS might sometimes be faster, but not as stable).
+        MINIMIZER CG
+      &END OT
+      &OUTER_SCF ! repeat the inner SCF cycle MAX_SCF times
+        MAX_SCF 50
+        EPS_SCF 1.0E-5 ! must match the above
+      &END
+
+      &PRINT
+        &RESTART
+          &EACH
+            QS_SCF 500
+          &END
+          ADD_LAST NUMERIC
+        &END
+       &END
+
+    &END SCF
+
+    &XC
+     &VDW_POTENTIAL
+       POTENTIAL_TYPE   NON_LOCAL
+       &NON_LOCAL
+        CUTOFF 300.
+        KERNEL_FILE_NAME rVV10_kernel_table.dat
+        TYPE RVV10
+       &END
+      &END
+
+     &XC_FUNCTIONAL
+     &GGA_X_RPW86
+     &END
+     &GGA_C_PBE
+     &END
+     &END XC_FUNCTIONAL
+    &END XC
+  &END DFT
+ 
+  ! description of the system
+  &SUBSYS
+  
+    &CELL 
+      ! unit cells that are orthorhombic are more efficient with CP2K
+      A 18.097    -0.003     0.000
+      B -9.042    15.680     0.000
+      C 0.000000000   0.000000000  25.000000000  
+    PERIODIC XYZ
+    &END CELL
+
+    ! atom coordinates can be in the &COORD section,
+    ! or provided as an external file.
+    &TOPOLOGY
+      COORD_FILE_NAME initial_conf.xyz
+      COORD_FILE_FORMAT XYZ
+    &END
+
+    ! MOLOPT basis sets are fairly costly,
+    ! but in the 'DZVP-MOLOPT-SR-GTH' available for all elements
+    ! their contracted nature makes them suitable
+    ! for condensed and gas phase systems alike.
+    &KIND Ti
+         BASIS_SET DZVP-MOLOPT-SR-GTH-q12
+         ELEMENT Ti
+         POTENTIAL GTH-PBE-q12
+      &END KIND
+      &KIND Mo
+         BASIS_SET DZVP-MOLOPT-SR-GTH-q14
+         ELEMENT Mo
+         POTENTIAL GTH-PBE-q14
+      &END KIND
+      &KIND C
+         BASIS_SET TZV2P-MOLOPT-GTH
+         ELEMENT C
+         POTENTIAL GTH-PBE-q4
+      &END KIND
+      &KIND O
+         BASIS_SET TZV2P-MOLOPT-GTH
+         ELEMENT O
+         POTENTIAL GTH-PBE-q6
+      &END KIND
+      &KIND H
+         BASIS_SET TZV2P-MOLOPT-GTH
+         ELEMENT H
+         POTENTIAL GTH-PBE-q1
+      &END KIND
+  &END SUBSYS
+
+&END FORCE_EVAL
+
+! how to propagate the system, selection via RUN_TYPE in the &GLOBAL section
+&MOTION
+
+
+ &MD
+
+   ENSEMBLE LANGEVIN  ! sampling the canonical ensemble, accurate properties might need NVE
+   TEMPERATURE [K] 500
+   TIMESTEP [fs] 0.5
+   STEPS 500
+   TEMP_TOL 10
+   TEMP_KIND
+   DISPLACEMENT_TOL [angstrom] = 0.05 
+   
+   &LANGEVIN
+    GAMMA 0.001
+    NOISY_GAMMA 8.0E-5
+   &END
+
+
+   &PRINT
+     &TEMP_KIND
+     &END
+   &END
+
+ &END MD
+
+ &PRINT
+
+   &TRAJECTORY
+     &EACH
+       MD 10
+     &END
+   &END
+   
+   &FORCES OFF
+    &EACH
+     MD 10
+    &END
+   &END
+
+   &VELOCITIES OFF
+     &EACH
+       MD 10
+     &END
+   &END
+
+   &RESTART
+     &EACH
+       MD 10
+     &END
+     ADD_LAST NUMERIC
+   &END
+
+   &RESTART_HISTORY
+     &EACH
+       MD 100
+     &END
+   &END
+  &END
+
+
+&END MOTION
+
+
+@if ${RESTART} == 1
+&EXT_RESTART
+  RESTART_FILE_NAME ${RESFILE}-1.restart
+   RESTART_DEFAULT T
+   RESTART_COUNTERS T
+   RESTART_POS T
+   RESTART_VEL T
+   RESTART_CELL T
+   RESTART_THERMOSTAT ${THERM_REST}
+   RESTART_CONSTRAINT F
+&END EXT_RESTART
+@endif

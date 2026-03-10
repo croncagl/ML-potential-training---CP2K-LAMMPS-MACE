@@ -1,0 +1,70 @@
+variable        NSTEPS1         equal 100000 
+variable        DUMP_FREQ       equal 40
+variable        TEMP_I          equal 273   # Kelvin
+variable	TEMP_F		equal 273
+variable	SEED            equal 745186 
+variable        TAU_T           equal 0.05   
+
+units           metal
+boundary        p p p
+
+# frequency for restart files writing
+restart 50000    lmp.restart
+
+# atom style - see docs for more options
+atom_style      atomic
+
+# frequency for rebuilding the neighbor list - if the system is slow moving/the timestep is small,
+# this frequency can be decreased
+neigh_modify    delay 0 every 1 check yes
+
+newton          on
+atom_modify     map yes
+
+# Choose whether to read from a restart file or a lammps-data file
+#read_restart    lmp.restart.200000
+read_data       geom.lmp
+
+# Set atom masses (if using lammps-data file, they must be in the same order)
+mass 1 47.867  # Ti
+mass 2 95.94  # Mo
+mass 3 12.0107  # C
+mass 4 15.9994  # O
+mass 5 1.00794  # H
+
+# Load model - write atomic species in the same order as above throughout the file
+# The pair style depends on the model
+pair_style     mace no_domain_decomposition
+pair_coeff     * * /path/to/some_mace_universal_model.pt Ti Mo C O H 
+
+# XYZ DUMP
+dump            myDump all xyz ${DUMP_FREQ} dump.xyz
+dump_modify     myDump append yes element Ti Mo C O H
+
+# Custom DUMP
+#dump           dump_all all custom ${DUMP_FREQ} traj.lammps id element x y z vx vy vz fx fy fz
+#dump_modify    dump_all format float %10.6f append yes element Ti Mo C O H 
+#dump_modify	dump_all sort id
+
+
+# TIMESTEP
+timestep        0.001  #ps
+thermo          ${DUMP_FREQ}
+thermo_style    custom step temp pe ke etotal 
+thermo_modify   flush yes
+
+# Set the starting velocities - comment these lines if restart file is used
+velocity        all create ${TEMP_I} ${SEED} dist gaussian
+
+# NVT Run - various types of thermostats are available on the docs
+fix             1 all langevin ${TEMP_I} ${TEMP_F} ${TAU_T} ${SEED} zero yes
+fix		2 all nve
+
+run             ${NSTEPS1}
+
+unfix           1
+unfix		2
+
+
+
+

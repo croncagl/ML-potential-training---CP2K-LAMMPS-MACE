@@ -1,0 +1,149 @@
+@SET RESFILE  Mo2Ti2C3
+@SET INPDIR   .
+@SET WRKDIR   .
+@SET RESTART 1
+@SET  THERM_REST T
+@SET GUESS ATOMIC
+
+&GLOBAL
+  PROJECT Mo2Ti2C3
+  RUN_TYPE ENERGY     
+  IOLEVEL LOW       
+  WALLTIME 80000 
+  PREFERRED_DIAG_LIBRARY  ELPA
+&END GLOBAL
+
+&FORCE_EVAL
+  STRESS_TENSOR ANALYTICAL
+  METHOD Quickstep
+  &DFT
+    BASIS_SET_FILE_NAME BASIS_MOLOPT
+    POTENTIAL_FILE_NAME GTH_POTENTIALS            
+
+    CHARGE 0
+    UKS .FALSE.
+    MULTIPLICITY 1
+
+    &MGRID
+       NGRIDS 5
+    &END
+
+    &QS
+       ! use the GPW method (i.e. pseudopotential based calculations with the Gaussian and Plane Waves scheme).
+       METHOD GPW 
+       ! default threshold for numerics ~ roughly numerical accuracy of the total energy per electron,
+       ! sets reasonable values for all other thresholds.
+       EPS_DEFAULT 1.0E-10 
+       ! used for MD, the method used to generate the initial guess.
+       EXTRAPOLATION ASPC 
+       EXTRAPOLATION_ORDER 0
+    &END
+
+    RESTART_FILE_NAME ${INPDIR}/${RESFILE}-RESTART.wfn
+
+    &SCF                              
+      MAX_SCF 400
+      SCF_GUESS  ${GUESS}
+      ADDED_MOS 700
+      CHOLESKY INVERSE_DBCSR
+      &SMEAR ON
+        METHOD FERMI_DIRAC
+        ELECTRONIC_TEMPERATURE [K] 300
+      &END SMEAR
+      EPS_SCF 1.0E-6 
+      &DIAGONALIZATION
+        ALGORITHM STANDARD
+        EPS_ADAPT 0.01
+      &END DIAGONALIZATION
+      &MIXING
+        METHOD BROYDEN_MIXING
+        ALPHA   0.1
+        BETA    1.5
+        NBROYDEN  8
+      &END
+
+      &PRINT
+        &RESTART
+          &EACH
+            QS_SCF 500
+          &END
+          ADD_LAST NUMERIC
+        &END
+       &END
+
+    &END SCF
+    
+    &XC
+     &VDW_POTENTIAL
+       POTENTIAL_TYPE   NON_LOCAL
+       &NON_LOCAL
+         CUTOFF 300.
+         KERNEL_FILE_NAME rVV10_kernel_table.dat
+         TYPE RVV10
+        &END
+       &END
+
+      &XC_FUNCTIONAL
+       &GGA_X_RPW86
+       &END
+       &GGA_C_PBE
+       &END
+      &END XC_FUNCTIONAL    
+ 
+    &END XC
+
+  &END DFT
+ 
+  ! description of the system
+  &SUBSYS
+
+    &CELL 
+      ! unit cells that are orthorhombic are more efficient with CP2K
+      A 18.097    -0.003     0.000
+      B -9.042    15.680     0.000
+      C 0.000000000   0.000000000  25.000000000
+    PERIODIC XYZ
+    &END CELL
+
+    &KIND Ti
+         BASIS_SET DZVP-MOLOPT-SR-GTH-q12
+         ELEMENT Ti
+         POTENTIAL GTH-PBE-q12
+      &END KIND
+      &KIND Mo
+         BASIS_SET DZVP-MOLOPT-SR-GTH-q14
+         ELEMENT Mo
+         POTENTIAL GTH-PBE-q14
+      &END KIND
+      &KIND C
+         BASIS_SET TZV2P-MOLOPT-GTH
+         ELEMENT C
+         POTENTIAL GTH-PBE-q4
+      &END KIND
+      &KIND O
+         BASIS_SET TZV2P-MOLOPT-GTH
+         ELEMENT O
+         POTENTIAL GTH-PBE-q6
+      &END KIND
+      &KIND H
+         BASIS_SET TZV2P-MOLOPT-GTH
+         ELEMENT H
+         POTENTIAL GTH-PBE-q1
+      &END KIND
+ 
+  &END SUBSYS
+
+&END FORCE_EVAL
+
+@if ${RESTART} == 1
+&EXT_RESTART
+  RESTART_FILE_NAME ${RESFILE}-1.restart
+   RESTART_DEFAULT T
+   RESTART_COUNTERS T
+   RESTART_POS T
+   RESTART_VEL T
+   RESTART_CELL T
+   RESTART_THERMOSTAT ${THERM_REST}
+   RESTART_CONSTRAINT F
+&END EXT_RESTART
+@endif

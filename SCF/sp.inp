@@ -1,0 +1,154 @@
+@SET RESFILE  Mo2Ti2C3
+@SET INPDIR   .
+@SET WRKDIR   .
+@SET RESTART 0
+@SET XYZ  ./geom.xyz
+@SET  THERM_REST T
+@SET GUESS ATOMIC
+
+&GLOBAL
+
+  PROJECT your_project_name
+  RUN_TYPE ENERGY_FORCE     
+  IOLEVEL LOW       
+  WALLTIME 80000 
+  PREFERRED_DIAG_LIBRARY  ELPA
+&END GLOBAL
+
+&FORCE_EVAL
+  &PRINT
+    &FORCES
+      FILENAME forces
+    &END FORCES
+  &END PRINT
+
+  STRESS_TENSOR ANALYTICAL
+  METHOD Quickstep
+  &DFT
+
+    BASIS_SET_FILE_NAME BASIS_MOLOPT
+    POTENTIAL_FILE_NAME GTH_POTENTIALS            
+
+
+    CHARGE 0
+    LSD
+    MULTIPLICITY 2
+
+    &MGRID
+       CUTOFF [Ry] 600 
+       REL_CUTOFF 60
+       NGRIDS 5
+    &END
+
+    &QS
+
+       METHOD GPW 
+       EPS_DEFAULT 1.0E-10 
+       EXTRAPOLATION ASPC 
+       EXTRAPOLATION_ORDER 0
+    &END
+
+    !RESTART_FILE_NAME ${INPDIR}/${RESFILE}-RESTART.wfn
+
+    &SCF                              
+      MAX_SCF 1500
+      SCF_GUESS  ${GUESS}
+      ADDED_MOS 700
+      CHOLESKY INVERSE_DBCSR
+      &SMEAR ON
+        METHOD FERMI_DIRAC
+        ELECTRONIC_TEMPERATURE [K] 300
+      &END SMEAR
+      EPS_SCF 1.0E-8 
+      &DIAGONALIZATION
+        ALGORITHM STANDARD
+        EPS_ADAPT 0.01
+      &END DIAGONALIZATION
+      &MIXING
+        METHOD BROYDEN_MIXING
+        ALPHA   0.1
+        BETA    1.5
+        NBROYDEN  8
+      &END
+
+      &PRINT
+        &RESTART
+          &EACH
+            QS_SCF 500
+          &END
+          ADD_LAST NUMERIC
+        &END
+       &END
+
+    &END SCF
+    
+    &XC
+     &VDW_POTENTIAL
+       POTENTIAL_TYPE   NON_LOCAL
+       &NON_LOCAL
+         CUTOFF 300.
+         KERNEL_FILE_NAME rVV10_kernel_table.dat
+         TYPE RVV10
+        &END
+       &END
+
+      &XC_FUNCTIONAL
+       &GGA_X_RPW86
+       &END
+       &GGA_C_PBE
+       &END
+      &END XC_FUNCTIONAL    
+ 
+    &END XC
+
+  &END DFT
+ 
+  ! description of the system
+  &SUBSYS
+
+    &CELL 
+      ! unit cells that are orthorhombic are more efficient with CP2K
+      A 36.228    0.000      0.000
+      B -18.203   31.317     0.000
+      C 0.000     0.000      35.000
+    PERIODIC XYZ
+    &END CELL
+
+    &KIND Ti
+         BASIS_SET DZVP-MOLOPT-SR-GTH-q12
+         ELEMENT Ti
+         POTENTIAL GTH-PBE-q12
+      &END KIND
+      &KIND Mo
+         BASIS_SET DZVP-MOLOPT-SR-GTH-q14
+         ELEMENT Mo
+         POTENTIAL GTH-PBE-q14
+      &END KIND
+      &KIND C
+         BASIS_SET TZV2P-MOLOPT-GTH
+         ELEMENT C
+         POTENTIAL GTH-PBE-q4
+      &END KIND
+      &KIND O
+         BASIS_SET TZV2P-MOLOPT-GTH
+         ELEMENT O
+         POTENTIAL GTH-PBE-q6
+      &END KIND
+      &KIND H
+         BASIS_SET TZV2P-MOLOPT-GTH
+         ELEMENT H
+         POTENTIAL GTH-PBE-q1
+      &END KIND
+      &TOPOLOGY 
+         COORDINATE  xyz
+         COORD_FILE_NAME  ${XYZ}
+      &END TOPOLOGY
+ 
+  &END SUBSYS
+
+&END FORCE_EVAL
+
+&EXT_RESTART
+   RESTART_COUNTERS F
+   RESTART_POS T
+&END EXT_RESTART
