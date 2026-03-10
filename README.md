@@ -64,7 +64,7 @@ where the various snapshots `i` of the simulations are printed sequentially in t
 Since ab initio MD simulations (such as the one done with CP2K) can be computationally demanding (in both time and cost), an alternative is provided by running a classical molecular dynamics simulation with a so-called universal model, or foundation model, which describes fairly accurately the interactions between atoms of many different species. In this case we refer to the MACE foundation models, that are extensively described [here](https://github.com/ACEsuit/mace-foundations).
 
 This folder contains these scripts:  
-- `input.lammps`: example LAMMPS input file for a MD simulation with a MACE potential
+- `input.lammps`: example LAMMPS input file ([here](https://docs.lammps.org/Run_formats.html#input-file) other details) for a MD simulation with a MACE potential
 - `run_lammps_mace_slurm`: SLURM script for launching the LAMMPS MD input file
 
 After having created the `geom.lmp` file which is a file containing the information about the system under investigation (coordinates, masses, cell, ... [here](https://docs.lammps.org/Run_formats.html#data-file) the documentation) and after having modified the input file `input.lammps` accordingly to your system properties and simulation details, run the MD simulation with  
