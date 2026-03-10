@@ -67,7 +67,7 @@ This folder contains these scripts:
 - `input.lammps`: example LAMMPS input file for a MD simulation with a MACE potential
 - `run_lammps_mace_slurm`: SLURM script for launching the LAMMPS MD input file
 
-After having modified the input file `input.lammps` accordingly to your system properties and simulation details, run the MD simulation with  
+After having created the `geom.lmp` file which is a file containing the information about the system under investigation (coordinates, masses, cell, ... [here](https://docs.lammps.org/Run_formats.html#data-file) the documentation) and after having modified the input file `input.lammps` accordingly to your system properties and simulation details, run the MD simulation with  
 `$ sbatch run_lammps_mace_slurm`  
 Also in this case, the simulation will produce a trajectory file in a standard `.xyz` format, as requested by the `dump` command in the `input.lammps` input file.
 
