@@ -7,7 +7,8 @@ This repository contains a suite of codes to train a Machine Learning potential 
 The installation steps reported here partially refer to the [Alps](https://docs.cscs.ch/alps/) infrastructure of CSCS. You will have to change accordingly to your needs.
 
 - CP2K: the software is already available on Alps via uenv. You can find CP2K images with the command `$ uenv image find cp2k` and then pull the latest (as per now 2026.1:v1) image via the command  
-  `$ uenv image pull cp2k/2026.1:v1`  
+  `$ uenv image pull cp2k/2026.1:v1`
+After, download the `mps-wrapper.sh` script available [here](https://docs.cscs.ch/running/slurm/#multiple-ranks-per-gpu) and place it in a safe permanent folder.
   More information about CP2K on Alps can be found on this [page](https://docs.cscs.ch/software/sciapps/cp2k/).
 - LAMMPS+MACE: Following the section "LAMMPS with MACE" at the end of this [page](https://docs.cscs.ch/software/sciapps/lammps/#lammps-ml-iap-using-lammps-with-machine-learning-interatomic-potentials), you will have to run the following commands:
   ```
