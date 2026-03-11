@@ -32,7 +32,7 @@ else
 fi 
  
 # run
-srun --cpu-bind=socket /path_to_your/mps-wrapper.sh cp2k.psmp -i md.inp -o md.out
+srun --cpu-bind=socket /path_to_your/mps-wrapper.sh /user-environment/env/cp2k/bin/cp2k.psmp -i md.inp -o md.out
 
 # mark first run as complete
 if [ ! -e "first_run.done" ]; then
