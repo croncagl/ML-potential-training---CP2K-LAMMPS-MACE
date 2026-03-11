@@ -1,4 +1,4 @@
-@SET RESFILE  Mo2Ti2C3
+@SET RESFILE  H2O
 @SET INPDIR   .
 @SET WRKDIR   .
 @SET RESTART 1
@@ -6,7 +6,7 @@
 @SET GUESS ATOMIC
 
 &GLOBAL
-  PROJECT Mo2Ti2C3
+  PROJECT H2O
   RUN_TYPE ENERGY     
   IOLEVEL LOW       
   WALLTIME 80000 
@@ -99,27 +99,9 @@
 
     &CELL 
       ! unit cells that are orthorhombic are more efficient with CP2K
-      A 18.097    -0.003     0.000
-      B -9.042    15.680     0.000
-      C 0.000000000   0.000000000  25.000000000
+      ABC [angstrom] 12.42 12.42 12.42
     PERIODIC XYZ
     &END CELL
-
-    &KIND Ti
-         BASIS_SET DZVP-MOLOPT-SR-GTH-q12
-         ELEMENT Ti
-         POTENTIAL GTH-PBE-q12
-      &END KIND
-      &KIND Mo
-         BASIS_SET DZVP-MOLOPT-SR-GTH-q14
-         ELEMENT Mo
-         POTENTIAL GTH-PBE-q14
-      &END KIND
-      &KIND C
-         BASIS_SET TZV2P-MOLOPT-GTH
-         ELEMENT C
-         POTENTIAL GTH-PBE-q4
-      &END KIND
       &KIND O
          BASIS_SET TZV2P-MOLOPT-GTH
          ELEMENT O
@@ -147,3 +129,4 @@
    RESTART_CONSTRAINT F
 &END EXT_RESTART
 @endif
+
