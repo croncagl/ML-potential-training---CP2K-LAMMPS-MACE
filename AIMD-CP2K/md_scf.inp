@@ -25,6 +25,7 @@
     MULTIPLICITY 1
 
     &MGRID
+       CUTOFF [Ry] 500
        NGRIDS 5
     &END
 
@@ -129,4 +130,5 @@
    RESTART_CONSTRAINT F
 &END EXT_RESTART
 @endif
+
 
