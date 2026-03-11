@@ -3,24 +3,24 @@
 #SBATCH --job-name=scf
 #SBATCH --time=02:00:00           # HH:MM:SS walltime per SCF
 #SBATCH --nodes=1                 # one node per array task
-#SBATCH --ntasks-per-node=36       # 4 MPI ranks per node
+#SBATCH --ntasks-per-core=1
+#SBATCH --ntasks-per-node=32       # 4 MPI ranks per node
 #SBATCH --cpus-per-task=8         # 4 OMP threads per rank
 #SBATCH --account=your_account    # CHANGE YOUR ACCOUNT HERE
 #SBATCH --hint=nomultithread      # disable hyperthreading
 #SBATCH --exclusive               # reserve the node exclusively
 #SBATCH --no-requeue
-#SBATCH --uenv=cp2k/2025.1:v2
+#SBATCH --uenv=cp2k/2026.1:v2
 #SBATCH --view=cp2k
 #SBATCH --array=0-29              # launch 30 independent tasks
 
 
 #  environment setup 
-export CP2K_DATA_DIR=/your_path_to_cp2k_data
-export CUDA_CACHE_PATH="/dev/shm/$RANDOM"
+
+export CUDA_CACHE_PATH="/dev/shm/$USER/cuda_cache" 
 export MPICH_GPU_SUPPORT_ENABLED=1
 export MPICH_MALLOC_FALLBACK=1
-
-export OMP_NUM_THREADS=$((SLURM_CPUS_PER_TASK))
+export OMP_NUM_THREADS=$((SLURM_CPUS_PER_TASK - 1))
 
 # ADDED - these stop the crashing due to the large number of jobs launched in the array
 export OMP_PLACES=cores
