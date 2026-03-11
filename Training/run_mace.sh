@@ -7,10 +7,10 @@
 #SBATCH --gres=gpu:4
 #SBATCH --cpus-per-task=36
 #SBATCH --time=16:00:00
-#SBATCH --account=lp86
+#SBATCH --account=your_account
 #SBATCH --partition=normal
-#SBATCH --uenv=pytorch/v2.6.0:/user-environment
-#SBATCH --view=default
+#SBATCH --uenv=lammps/20251210:v2
+#SBATCH --view=kokkos
 #################################
 # OpenMP environment variables #
 #################################
@@ -47,13 +47,13 @@ export FI_CXI_RX_MATCH_MODE=software
 export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
 
 
-source /users/croncagl/mace-torch/bin/activate 
+source /path_to_your_lammps_mace_venv/bin/activate   # CHANGE PATH HERE 
 
 fixed_args=(
   --name="slab_finetuned"
   --seed=881311935
   --device='cuda'
-  #--enable_cueq=True
+  --enable_cueq=True
   --model='MACE'
   --error_table='PerAtomRMSE'
   --default_dtype='float32'
@@ -65,7 +65,7 @@ fixed_args=(
   --valid_file="val.xyz"
   --test_file="test.xyz"
   --loss='weighted'
-  --config_type_weights '{"slab_clean":1,"slab_term":1,"slab_CO2":1,"gas":1,"molecule":1,"finetuning":1.0,"finetuning_h2co3":0.5,"big_slab_CO2":1}'
+  #--config_type_weights '{"slab_clean":1,"slab_term":1,"slab_CO2":1,"gas":1,"molecule":1,"finetuning":1.0,"finetuning_h2co3":0.5,"big_slab_CO2":1}'
   --energy_key='REF_energy'
   --forces_key='REF_forces'
   --E0s="isolated"      # Isolated atom energies in the training file
