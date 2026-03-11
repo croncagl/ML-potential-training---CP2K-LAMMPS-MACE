@@ -1,4 +1,4 @@
-@SET RESFILE  Mo2Ti2C3
+@SET RESFILE  H2O
 @SET INPDIR   .
 @SET WRKDIR   .
 @SET RESTART 1 
@@ -6,7 +6,7 @@
 @SET GUESS RESTART
 
 &GLOBAL 
-  PROJECT Mo2Ti2C3
+  PROJECT H2O
   RUN_TYPE MD     
   IOLEVEL LOW       
   WALLTIME 80000 
@@ -95,16 +95,14 @@
   
     &CELL 
       ! unit cells that are orthorhombic are more efficient with CP2K
-      A 18.097    -0.003     0.000
-      B -9.042    15.680     0.000
-      C 0.000000000   0.000000000  25.000000000  
+      ABC [angstrom] 12.42 12.42 12.42
     PERIODIC XYZ
     &END CELL
 
     ! atom coordinates can be in the &COORD section,
     ! or provided as an external file.
     &TOPOLOGY
-      COORD_FILE_NAME initial_conf.xyz
+      COORD_FILE_NAME water.xyz
       COORD_FILE_FORMAT XYZ
     &END
 
@@ -112,21 +110,6 @@
     ! but in the 'DZVP-MOLOPT-SR-GTH' available for all elements
     ! their contracted nature makes them suitable
     ! for condensed and gas phase systems alike.
-    &KIND Ti
-         BASIS_SET DZVP-MOLOPT-SR-GTH-q12
-         ELEMENT Ti
-         POTENTIAL GTH-PBE-q12
-      &END KIND
-      &KIND Mo
-         BASIS_SET DZVP-MOLOPT-SR-GTH-q14
-         ELEMENT Mo
-         POTENTIAL GTH-PBE-q14
-      &END KIND
-      &KIND C
-         BASIS_SET TZV2P-MOLOPT-GTH
-         ELEMENT C
-         POTENTIAL GTH-PBE-q4
-      &END KIND
       &KIND O
          BASIS_SET TZV2P-MOLOPT-GTH
          ELEMENT O
@@ -148,9 +131,9 @@
  &MD
 
    ENSEMBLE LANGEVIN  ! sampling the canonical ensemble, accurate properties might need NVE
-   TEMPERATURE [K] 500
+   TEMPERATURE [K] 300
    TIMESTEP [fs] 0.5
-   STEPS 500
+   STEPS 50
    TEMP_TOL 10
    TEMP_KIND
    DISPLACEMENT_TOL [angstrom] = 0.05 
@@ -172,7 +155,7 @@
 
    &TRAJECTORY
      &EACH
-       MD 10
+       MD 1
      &END
    &END
    
@@ -197,7 +180,7 @@
 
    &RESTART_HISTORY
      &EACH
-       MD 100
+       MD 10
      &END
    &END
   &END
