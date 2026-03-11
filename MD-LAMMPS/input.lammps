@@ -22,27 +22,24 @@ newton          on
 
 # Choose whether to read from a restart file or a lammps-data file
 #read_restart    lmp.restart.200000
-read_data       geom.lmp
+read_data       water.lmp
 
 # Set atom masses (if using lammps-data file, they must be in the same order)
-mass 1 47.867  # Ti
-mass 2 95.94  # Mo
-mass 3 12.0107  # C
-mass 4 15.9994  # O
-mass 5 1.00794  # H
+mass 1 15.9994  # O
+mass 2 1.00794  # H
 
 # Load your converted model - write atomic species in the same order as above throughout the file
 
 pair_style     mliap unified your_model-mliap_lammps.pt 0
-pair_coeff     * * Ti Mo C O H 
+pair_coeff     * * O H 
 
 # XYZ DUMP
 dump            myDump all xyz ${DUMP_FREQ} dump.xyz
-dump_modify     myDump append yes element Ti Mo C O H
+dump_modify     myDump append yes element O H
 
 # Custom DUMP
 #dump           dump_all all custom ${DUMP_FREQ} traj.lammps id element x y z vx vy vz fx fy fz
-#dump_modify    dump_all format float %10.6f append yes element Ti Mo C O H 
+#dump_modify    dump_all format float %10.6f append yes element O H 
 #dump_modify	  dump_all sort id
 
 
