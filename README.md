@@ -11,7 +11,8 @@ This repository contains a suite of codes to train a Machine Learning potential 
 To train a ML interatomic potential on a DFT-labeled MD trajectory, these steps are needed:
 1) MD simulation
 2) SCF labelling
-3) Active Learning
+3) Training
+4) Active Learning
 
 # 1. MD simulation
 
@@ -28,7 +29,7 @@ This folder contains these scripts:
 - `run_md_scf.sh` is the SLURM script for the single point calculation
 
 These scripts run a Second-Generation Car-Parrinello Molecular Dynamics.  
-After changing all the settings in the input files `md.inp`and `md_scf.inp` according to your system (i.e. coordinates file, cell parameters, temperature, timestep, pseudopototentials, cutoffs, ...), run the calculation with  
+After changing all the settings in the input files `md.inp`and `md_scf.inp` according to your system (i.e. coordinates file, cell parameters, temperature, timestep, pseudopototentials, cutoffs, ..., more info [here](https://manual.cp2k.org/trunk/CP2K_INPUT.html)), run the calculation with  
 `$ sbatch run_md.sh`  
 After the simulation runs a certain number of steps, specified in the input file with `STEPS` in the `&MD` section, the job ends, and the single point set in `md_scf.inp` is automatically launched via `run_md_scf.sh`.
 Then, the MD simulation restarts using the new wavefunction obtained after the precise SCF, and so on until stopped manually.
@@ -113,8 +114,15 @@ The labelling must be done following these instructions:
 > **Warning:** Pay attention to adjust the cell that is being used in all the files that require it: `sp.inp`, `select_configs.py`, `make_extended_mace.sh`
 
 
+# 3. Training
 
-# 3. Active Learning
+Once the `make_extended_mace.sh` script has constructed the training data file, the training can start.  
+To do this, simply put your training set file in the `Training` folder, where the `run_mace.sh` script is, and run it with  
+`$ sbatch run_mace.sh`
+
+
+
+# 4. Active Learning
 - `std_max.py` is the python script which calculates the maximum standard deviation of the forces, among all atoms for each configuration, and among all models. 
 - `run_stdev` is the SLURM script to run the `std_max.py` script
 - `conf_selection.ipynb` is a Jupyter notebook template to analyze the maximum standard deviation histograms, and select a number of configurations based on standard deviation.
