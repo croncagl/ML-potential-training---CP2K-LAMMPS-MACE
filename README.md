@@ -20,6 +20,7 @@ After, download the `mps-wrapper.sh` script available [here](https://docs.cscs.c
   $ pip install torch --index-url https://download.pytorch.org/whl/cu129
   $ pip install mace-torch cuequivariance-torch cuequivariance cuequivariance-ops-torch-cu12 cupy-cuda12x
   ```
+  > **Warning:** Some scripts in the repository will have to source this virtual environment you just created. Therefore, before running, check that when this happens, you change the name and path accordingly.
 
 # Workflow description
 
