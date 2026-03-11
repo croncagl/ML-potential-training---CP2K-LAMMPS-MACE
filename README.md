@@ -140,8 +140,8 @@ The labelling must be done following these instructions:
 # 3. Training
 
 Once the `make_extended_mace.sh` script has constructed the training data file, the training can start.  
-To do this, simply put your training set file in the `Training` folder, where the `run_mace.sh` script is, and run it with  
-`$ sbatch run_mace.sh`
+To do this, simply put your training set file in the `Training` folder, where the `run_mace.sh` script is, and run it with   
+`$ sbatch run_mace.sh`  
 Once the training is finished, convert the created `.model` file in the LAMMPS format. To do this, exit any uenv/venv loaded on a login node, and then run these commands 
 ```
 $ salloc -A <your_account> -C gpu -N 1 -t 00:05:00
