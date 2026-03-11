@@ -1,8 +1,8 @@
 variable        NSTEPS1         equal 100000 
 variable        DUMP_FREQ       equal 40
 variable        TEMP_I          equal 273   # Kelvin
-variable	TEMP_F		equal 273
-variable	SEED            equal 745186 
+variable	      TEMP_F		      equal 273
+variable	      SEED            equal 745186 
 variable        TAU_T           equal 0.05   
 
 units           metal
@@ -19,7 +19,6 @@ atom_style      atomic
 neigh_modify    delay 0 every 1 check yes
 
 newton          on
-atom_modify     map yes
 
 # Choose whether to read from a restart file or a lammps-data file
 #read_restart    lmp.restart.200000
@@ -32,10 +31,10 @@ mass 3 12.0107  # C
 mass 4 15.9994  # O
 mass 5 1.00794  # H
 
-# Load model - write atomic species in the same order as above throughout the file
-# The pair style depends on the model
-pair_style     mace no_domain_decomposition
-pair_coeff     * * /path/to/some_mace_universal_model.pt Ti Mo C O H 
+# Load your converted model - write atomic species in the same order as above throughout the file
+
+pair_style     mliap unified your_model-mliap_lammps.pt 0
+pair_coeff     * * Ti Mo C O H 
 
 # XYZ DUMP
 dump            myDump all xyz ${DUMP_FREQ} dump.xyz
@@ -44,7 +43,7 @@ dump_modify     myDump append yes element Ti Mo C O H
 # Custom DUMP
 #dump           dump_all all custom ${DUMP_FREQ} traj.lammps id element x y z vx vy vz fx fy fz
 #dump_modify    dump_all format float %10.6f append yes element Ti Mo C O H 
-#dump_modify	dump_all sort id
+#dump_modify	  dump_all sort id
 
 
 # TIMESTEP
@@ -58,12 +57,12 @@ velocity        all create ${TEMP_I} ${SEED} dist gaussian
 
 # NVT Run - various types of thermostats are available on the docs
 fix             1 all langevin ${TEMP_I} ${TEMP_F} ${TAU_T} ${SEED} zero yes
-fix		2 all nve
+fix		          2 all nve
 
 run             ${NSTEPS1}
 
 unfix           1
-unfix		2
+unfix		        2
 
 
 
