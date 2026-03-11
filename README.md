@@ -10,7 +10,7 @@ The installation steps reported here partially refer to the [Alps](https://docs.
   `$ uenv image pull cp2k/2026.1:v1`  
 After, download the `mps-wrapper.sh` script available [here](https://docs.cscs.ch/running/slurm/#multiple-ranks-per-gpu) and place it in a safe permanent folder.
   More information about CP2K on Alps can be found on this [page](https://docs.cscs.ch/software/sciapps/cp2k/).
-- LAMMPS+MACE: Following the section "LAMMPS with MACE" at the end of this [page](https://docs.cscs.ch/software/sciapps/lammps/#lammps-ml-iap-using-lammps-with-machine-learning-interatomic-potentials), you will have to run the following commands:
+- LAMMPS+MACE: Following the section "LAMMPS with MACE" at the end of this [page](https://docs.cscs.ch/software/sciapps/lammps/#lammps-ml-iap-using-lammps-with-machine-learning-interatomic-potentials), you will have to create a dedicated virtual environment. Move to a safe and permament directory (such as `$STORE` or `$HOME`) and run the following commands:
   ```
   $ uenv image pull lammps/20251210:v2
   $ uenv start --view kokkos lammps/20251210:v2
