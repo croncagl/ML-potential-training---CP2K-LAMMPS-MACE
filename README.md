@@ -4,7 +4,21 @@ This repository contains a suite of codes to train a Machine Learning potential 
 
 # Installation
 
-### complete here
+The installation steps reported here partially refer to the [Alps](https://docs.cscs.ch/alps/) infrastructure of CSCS. You will have to change accordingly to your needs.
+
+- CP2K: the software is already available on Alps via uenv. You can find CP2K images with the command `$ uenv image find cp2k` and then pull the latest (as per now 2026.1:v1) image via the command  
+  `$ uenv image pull cp2k/2026.1:v1`  
+  More information about CP2K on Alps can be found on this [page](https://docs.cscs.ch/software/sciapps/cp2k/).
+- LAMMPS+MACE: Following the section "LAMMPS with MACE" at the end of this [page](https://docs.cscs.ch/software/sciapps/lammps/#lammps-ml-iap-using-lammps-with-machine-learning-interatomic-potentials), you will have to run the following commands:
+  ```
+  $ uenv image pull lammps/20251210:v2
+  $ uenv start --view kokkos lammps/20251210:v2
+  $ python -m venv --system-site-packages my-venv-lammps-mace  #change name here if you want and accordingly eveywhere else in the scripts
+  $ source my-venv-lammps-mace/bin/activate
+  $ pip install --upgrade pip
+  $ pip install torch --index-url https://download.pytorch.org/whl/cu129
+  $ pip install mace-torch cuequivariance-torch cuequivariance cuequivariance-ops-torch-cu12 cupy-cuda12x
+  ```
 
 # Workflow description
 
@@ -62,9 +76,15 @@ where the various snapshots `i` of the simulations are printed sequentially in t
 
 ## 1b) MD-LAMMPS
 
-Since ab initio MD simulations (such as the one done with CP2K) can be computationally demanding (in both time and cost), an alternative is provided by running a classical molecular dynamics simulation with a so-called universal model, or foundation model, which describes fairly accurately the interactions between atoms of many different species. In this case we refer to the MACE foundation models, that are extensively described [here](https://github.com/ACEsuit/mace-foundations).
+Since ab initio MD simulations (such as the one done with CP2K) can be computationally demanding (in both time and cost), an alternative is provided by running a classical molecular dynamics simulation with a so-called universal model, or foundation model, which describes fairly accurately the interactions between atoms of many different species. In this case we refer to the MACE foundation models, that are extensively described [here](https://github.com/ACEsuit/mace-foundations).  
+If you plan to use one of these models, first make sure to convert it to the right LAMMPS format via the commands 
+```
+$ uenv start --view kokkos lammps/20251210:v2
+$ source my-venv-lammps-mace/bin/activate
+$ python -m mace.cli.create_lammps_model mace.model --format=mliap
+```
 
-This folder contains these scripts:  
+The `MD-LAMMPS` folder contains these scripts:  
 - `input.lammps`: example LAMMPS input file ([here](https://docs.lammps.org/Run_formats.html#input-file) other details) for a MD simulation with a MACE potential
 - `run_lammps_mace_slurm`: SLURM script for launching the LAMMPS MD input file
 
@@ -119,8 +139,13 @@ The labelling must be done following these instructions:
 Once the `make_extended_mace.sh` script has constructed the training data file, the training can start.  
 To do this, simply put your training set file in the `Training` folder, where the `run_mace.sh` script is, and run it with  
 `$ sbatch run_mace.sh`
-
-
+Once the training is finished, convert the created `.model` file in the LAMMPS format with the commands
+```
+$ uenv start --view kokkos lammps/20251210:v2
+$ source my-venv-lammps-mace/bin/activate
+$ python -m mace.cli.create_lammps_model mace.model --format=mliap
+```
+The model can be used now to run MD simulations with LAMMPS as described in section 1b).
 
 # 4. Active Learning
 - `std_max.py` is the python script which calculates the maximum standard deviation of the forces, among all atoms for each configuration, and among all models. 
