@@ -77,8 +77,10 @@ where the various snapshots `i` of the simulations are printed sequentially in t
 ## 1b) MD-LAMMPS
 
 Since ab initio MD simulations (such as the one done with CP2K) can be computationally demanding (in both time and cost), an alternative is provided by running a classical molecular dynamics simulation with a so-called universal model, or foundation model, which describes fairly accurately the interactions between atoms of many different species. In this case we refer to the MACE foundation models, that are extensively described [here](https://github.com/ACEsuit/mace-foundations).  
-If you plan to use one of these models, first make sure to convert it to the right LAMMPS format via the commands 
+If you plan to use one of these models, first make sure to convert it to the right LAMMPS format. To do this, exit any uenv/venv loaded on a login node, and then run these commands 
 ```
+$ salloc -A <your_account> -C gpu -N 1 -t 00:05:00
+$ srun --pty /bin/bash
 $ uenv start --view kokkos lammps/20251210:v2
 $ source my-venv-lammps-mace/bin/activate
 $ python -m mace.cli.create_lammps_model mace.model --format=mliap
@@ -139,8 +141,10 @@ The labelling must be done following these instructions:
 Once the `make_extended_mace.sh` script has constructed the training data file, the training can start.  
 To do this, simply put your training set file in the `Training` folder, where the `run_mace.sh` script is, and run it with  
 `$ sbatch run_mace.sh`
-Once the training is finished, convert the created `.model` file in the LAMMPS format with the commands
+Once the training is finished, convert the created `.model` file in the LAMMPS format. To do this, exit any uenv/venv loaded on a login node, and then run these commands 
 ```
+$ salloc -A <your_account> -C gpu -N 1 -t 00:05:00
+$ srun --pty /bin/bash
 $ uenv start --view kokkos lammps/20251210:v2
 $ source my-venv-lammps-mace/bin/activate
 $ python -m mace.cli.create_lammps_model mace.model --format=mliap
