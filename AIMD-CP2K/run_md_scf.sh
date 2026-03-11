@@ -21,5 +21,5 @@ export OMP_NUM_THREADS=$((SLURM_CPUS_PER_TASK - 1))
 ulimit -s unlimited
  
 # run
-srun --cpu-bind=socket /path_to_your/mps-wrapper.sh cp2k.psmp -i md_scf.inp -o md_scf.out
+srun --cpu-bind=socket /path_to_your/mps-wrapper.sh /user-environment/env/cp2k/bin/cp2k.psmp -i md_scf.inp -o md_scf.out
 sbatch run_md.sh
