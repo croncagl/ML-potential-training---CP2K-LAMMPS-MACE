@@ -12,6 +12,7 @@ n_configs = 20
 
 # Create multiple sbatch file
 with open("submit_all.sh",'w') as f:
+    f.write("#!/bin/bash -l\n")
     f.write("cd sp_conf\n")
     for _folder in range(n_folders):
         folder = f"{_folder}"
