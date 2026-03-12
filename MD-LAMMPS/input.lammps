@@ -1,5 +1,5 @@
 variable        NSTEPS1         equal 100000 
-variable        DUMP_FREQ       equal 40
+variable        DUMP_FREQ       equal 1
 variable        TEMP_I          equal 273   # Kelvin
 variable	      TEMP_F		      equal 273
 variable	      SEED            equal 745186 
