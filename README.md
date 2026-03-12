@@ -46,7 +46,7 @@ This folder contains these scripts:
 - `water.xyz` a file containing the coordinates of 64 water molecules in a cubic box, that you can use as a test
 
 These scripts run a Second-Generation Car-Parrinello Molecular Dynamics.  
-After changing all the settings in the input files `md.inp`and `md_scf.inp` according to your system (i.e. coordinates file, cell parameters, temperature, timestep, pseudopototentials, cutoffs, ..., more info [here](https://manual.cp2k.org/trunk/CP2K_INPUT.html)), run the calculation with  
+If you are not running the test with water molecules, you must change all the settings in the input files `md.inp`and `md_scf.inp` according to your system (i.e. coordinates file, cell parameters, temperature, timestep, pseudopototentials, cutoffs, ..., more info [here](https://manual.cp2k.org/trunk/CP2K_INPUT.html)), and then run the calculation with  
 `$ sbatch run_md.sh`  
 After the simulation runs a certain number of steps, specified in the input file with `STEPS` in the `&MD` section, the job ends, and the single point set in `md_scf.inp` is automatically launched via `run_md_scf.sh`.
 Then, the MD simulation restarts using the new wavefunction obtained after the precise SCF, and so on until stopped manually.
