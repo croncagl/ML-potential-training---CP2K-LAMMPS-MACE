@@ -10,7 +10,7 @@
 #SBATCH --hint=nomultithread      # disable hyperthreading
 #SBATCH --exclusive               # reserve the node exclusively
 #SBATCH --no-requeue
-#SBATCH --uenv=cp2k/2026.1:v2
+#SBATCH --uenv=cp2k/2026.1:v1
 #SBATCH --view=cp2k
 #SBATCH --array=0-29              # launch 30 independent tasks
 
