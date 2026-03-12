@@ -7,8 +7,8 @@ import shutil
 input="orig_submit_0_00.sh"
 
 ### THESE TWO NUMBERS MUST BE THE SAME AS IN SELECT_CONFIG.PY ###
-n_folders = 3
-n_configs = 20
+n_folders = 4
+n_configs = 25
 
 # Create multiple sbatch file
 with open("submit_all.sh",'w') as f:
@@ -24,12 +24,12 @@ with open("submit_all.sh",'w') as f:
 
             with open("submit_"+folder+"_"+i+".sh",'w') as file:
                 data[2]="#SBATCH --job-name=scf_"+str(folder)+"_"+i+"\n"
-                data[13]=f"#SBATCH --array={_folder*n_configs}-{(_folder+1)*n_configs-1}"
+                for idx, line in enumerate(data):
+                    if "#SBATCH --array=" in line:
+                        data[idx] = f"#SBATCH --array={_folder*n_configs}-{(_folder+1)*n_configs-1}\n"
                 file.writelines(data)
             #f.write("chmod +x submit_"+folder+"_"+i+".sh\n")
             f.write("sbatch submit_"+folder+"_"+i+".sh\n")
 
         f.write("cd ..\n")
         os.system("mv submit_"+folder+"* "+"sp_conf/"+folder)
-    
-
