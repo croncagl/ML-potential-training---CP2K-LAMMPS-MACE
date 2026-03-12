@@ -30,7 +30,7 @@ mass 2 1.00794  # H
 
 # Load your converted model - write atomic species in the same order as above throughout the file
 
-pair_style     mliap unified your_model-mliap_lammps.pt 0
+pair_style     mliap unified mace-mh-1.model-mliap_lammps.pt 0
 pair_coeff     * * O H 
 
 # XYZ DUMP
