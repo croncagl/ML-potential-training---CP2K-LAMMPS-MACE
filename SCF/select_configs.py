@@ -134,12 +134,12 @@ num_configs_in = len(traj)
 #borders = np.linspace(0, num_configs_in, 6, dtype=int)   # 5 intervals in total  # use this line for equally spaced intervals
 
 # Custom borders
-borders = np.array([0, 200, 400, 600, 800, 1000])    # use this line to set borders manually
+borders = np.array([0, 500, 1000, 1500, 2000])    # use this line to set borders manually
 
 #total_configs = 170
 num_bins = len(borders) - 1
 #configs_per_bin = int(total_configs/num_bins)      # same number of configurations in each interval
-configs_per_bin = np.array([5, 15, 10, 25, 5])     # custom number of configurations in each interval
+configs_per_bin = np.array([25, 25, 25, 25])     # custom number of configurations in each interval
 
 print(borders)
 
@@ -173,8 +173,8 @@ if writing_geoms:
         np.save(os.path.join(folder, "indices.npy"),indices)
     
 config_num = 0
-conf_per_folder = 20
-num_folders = 3
+conf_per_folder = 25
+num_folders = 4
 
 for i in range(num_folders):
     bin_folder = os.path.join(folder ,str(i))
@@ -189,7 +189,7 @@ for i in range(num_folders):
             index = indices[j + conf_per_folder*i]
             config = traj[index]
             config.set_pbc([True,True,False])
-            config.set_cell([[36.228, 0.0000, 0.0000], [-18.203, 31.317, 0.0000], [0.0000,0.0000,35.0000]]) #change cell accordingly
+            config.set_cell([[12.42, 0.0000, 0.0000], [0.0, 12.42, 0.0000], [0.0000,0.0000,12.42]]) #change cell accordingly
             # Apply PBC
             config.set_positions(config.get_positions(wrap=True))
             # Remove floating molecules
