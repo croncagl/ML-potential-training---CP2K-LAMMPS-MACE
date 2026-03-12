@@ -38,7 +38,7 @@ The first step is to run a MD simulation. There are two options:
 
 ## 1a) AIMD-CP2K
 
-This folder contains these scripts:
+This folder contains these scripts and files:
 - `md.inp` is the CP2K input file for the ab initio molecular dynamics simulation
 - `md_scf.inp` is the CP2K input file for the single point calculation needed by the ab initio molecular dynamics simulation
 - `run_md.sh` is the SLURM script for the MD simulation
@@ -91,7 +91,7 @@ $ source my-venv-lammps-mace/bin/activate
 $ python -m mace.cli.create_lammps_model mace.model --format=mliap
 ```
 
-The `MD-LAMMPS` folder contains these scripts:  
+The `MD-LAMMPS` folder contains these scripts and files:  
 - `input.lammps`: example LAMMPS input file ([here](https://docs.lammps.org/Run_formats.html#input-file) other details) for a MD simulation with a MACE potential
 - `run_lammps_mace_slurm`: SLURM script for launching the LAMMPS MD input file
 - `water.lmp` a file containing the cell vectors as well as the masses and coordinates of 64 water molecules in a cubic box, that you can use as a test (same as `water.xyz` used in the CP2K MD)
