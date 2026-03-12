@@ -105,8 +105,8 @@ In general, you must create your own `geom.lmp` file - a file containing the inf
 As before, the simulation will produce a trajectory file in a standard `.xyz` format, as requested by the `dump` command in the `input.lammps` input file.
 
 # 2. SCF labelling
-When the MD is done, the next step is to "label" a subset of the trajectory with single point calculations to calculate DFT energies and forces. This will ultimately produce the training set that will be used by MACE to create the ML interatomic potential.   
-The folder `SCF` contains the following scripts:
+When the MD is done, the next step is to "label" a subset of the trajectory with single point calculations to calculate DFT energies and forces. This will ultimately produce the training set file that will be used by MACE to create the bespoke ML interatomic potential.   
+The folder `SCF` contains the following scripts and files:
 
 - `sp.inp`: CP2K input file for a single point calculation. This must have the desired level of theory for the ML potential.
 - `select_configs.py`: python script to select random configurations from a trajectory and set up the filesystem. It also contains a couple of functions to delete atoms or molecules above a certain height, and modify the multiplicity of `sp.inp` according to the number of electrons.
