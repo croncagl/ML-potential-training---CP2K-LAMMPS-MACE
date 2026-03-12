@@ -43,6 +43,7 @@ This folder contains these scripts:
 - `md_scf.inp` is the CP2K input file for the single point calculation needed by the ab initio molecular dynamics simulation
 - `run_md.sh` is the SLURM script for the MD simulation
 - `run_md_scf.sh` is the SLURM script for the single point calculation
+- `water.xyz` a file containing the coordinates of 64 water molecules in a cubic box, that you can use as a test
 
 These scripts run a Second-Generation Car-Parrinello Molecular Dynamics.  
 After changing all the settings in the input files `md.inp`and `md_scf.inp` according to your system (i.e. coordinates file, cell parameters, temperature, timestep, pseudopototentials, cutoffs, ..., more info [here](https://manual.cp2k.org/trunk/CP2K_INPUT.html)), run the calculation with  
@@ -53,25 +54,27 @@ Then, the MD simulation restarts using the new wavefunction obtained after the p
 
 The simulation will produce trajectory file in a standard `.xyz` format:  
 ```
-    1134  
- i =       76, E =    -40112.8815259092    
- Ti        -0.0374626618        1.6857316351       10.5523764451  
- Ti        -1.5426703813        4.2979402306       10.5567939505  
- Ti        -3.0538668963        6.9167098490       10.5380119194  
- Ti        -4.5623026327        9.5329102802       10.5231414480  
- Ti        -6.0740407861       12.1483415934       10.5395817632  
- Ti        -7.5813214901       14.7636733252       10.5415791306  
- Ti         2.9817163569        1.6823293923       10.5409873864  
- Ti         1.4702047842        4.2955845747       10.5580510520  
- Ti        -0.0358090963        6.9152884536       10.5378224025  
- Ti        -1.5433445710        9.5313615008       10.5296709956  
- Ti        -3.0555195063       12.1468966215       10.5431411195  
- Ti        -4.5651863866       14.7630269852       10.5479966274  
- Ti         6.0011354332        1.6798836881       10.5485150394  
- Ti         4.4915020773        4.2955538760       10.5404620587  
- Ti         2.9815548741        6.9157585884       10.5329503972  
- Ti         1.4730927629        9.5316746948       10.5395791049  
- Ti        -0.0378415659       12.1496751513       10.5439065695
+     192
+ i =     1424, time =      712.000, E =     -1105.6736896936
+  O         3.5337107104       -3.6887187243        5.0888985501
+  H         3.0680039652       -4.1967370795        5.7867724170
+  H         4.4603980763       -3.5235828804        5.3435138791
+  O        -3.4599963468        1.7260212500        4.6924344265
+  H        -3.9690158895        0.8943871846        4.4571245996
+  H        -4.0114445010        2.0629840997        5.4279543292
+  O         3.8132541531        3.6767210714       -7.6092879240
+  H         2.8077912161        3.9505080695       -7.5088943994
+  H         3.9071992980        2.7312972355       -8.0119714168
+  O        -2.9465112092       -0.0914352224       -4.1691567879
+  H        -2.3078910518        0.2395511044       -3.4738171345
+  H        -2.3887447414       -0.7205677884       -4.6293317215
+  O        -4.1349490504       -7.5162633190        5.6720183394
+  H        -4.6028577825       -8.2738420126        6.1002481780
+  H        -4.2329192090       -7.5961932706        4.6786529282
+  O        -6.3643099029        0.4460789029        2.1358396511
+  H        -5.7454751591       -0.2304906767        2.6165417730
+  H        -5.8308345325        1.3052175224        2.0273909523
+  O         5.5066525280       -3.8891911196        0.6268247593
 ...
 ```
 where the various snapshots `i` of the simulations are printed sequentially in the file.
@@ -91,6 +94,7 @@ $ python -m mace.cli.create_lammps_model mace.model --format=mliap
 The `MD-LAMMPS` folder contains these scripts:  
 - `input.lammps`: example LAMMPS input file ([here](https://docs.lammps.org/Run_formats.html#input-file) other details) for a MD simulation with a MACE potential
 - `run_lammps_mace_slurm`: SLURM script for launching the LAMMPS MD input file
+- `water.lmp` a file containing the cell vectors as well as the masses and coordinates of 64 water molecules in a cubic box, that you can use as a test (same as `water.xyz` used in the CP2K MD)
 
 After having created the `geom.lmp` file which is a file containing the information about the system under investigation (coordinates, masses, cell, ... [here](https://docs.lammps.org/Run_formats.html#data-file) the documentation) and after having modified the input file `input.lammps` accordingly to your system properties and simulation details, run the MD simulation with  
 `$ sbatch run_lammps_mace_slurm`  
