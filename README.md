@@ -18,7 +18,7 @@ After, download the `mps-wrapper.sh` script available [here](https://docs.cscs.c
   $ source my-venv-lammps-mace/bin/activate
   $ pip install --upgrade pip
   $ pip install torch --index-url https://download.pytorch.org/whl/cu129
-  $ pip install mace-torch cuequivariance-torch cuequivariance cuequivariance-ops-torch-cu12 cupy-cuda12x
+  $ pip install mace-torch cuequivariance-torch cuequivariance cuequivariance-ops-torch-cu12 cupy-cuda12x p7zip-full
   ```
   > **Warning:** Some scripts in the repository will have to source this virtual environment you just created. Therefore, before running, check that when this happens, you change the name and path accordingly.
 
@@ -95,8 +95,12 @@ The `MD-LAMMPS` folder contains these scripts:
 - `input.lammps`: example LAMMPS input file ([here](https://docs.lammps.org/Run_formats.html#input-file) other details) for a MD simulation with a MACE potential
 - `run_lammps_mace_slurm`: SLURM script for launching the LAMMPS MD input file
 - `water.lmp` a file containing the cell vectors as well as the masses and coordinates of 64 water molecules in a cubic box, that you can use as a test (same as `water.xyz` used in the CP2K MD)
+- `mace-mh-1.model-mliap_lammps.pt.7z` a compressed folder containing the MACE-MH-1 universal model already converted into MLIAP format
 
-Also in this case, if you are not running the test with water molecules, you must create your own `geom.lmp` file - a file containing the information about the system under investigation (coordinates, masses, cell, ... [here](https://docs.lammps.org/Run_formats.html#data-file) the documentation) and modify the input file `input.lammps` accordingly to your system properties and simulation details. Then you run the MD simulation with  
+To run the test with water molecules, first extract the MACE potential with the command:  
+`7z x mace-mh-1.model-mliap_lammps.pt.7z`  
+and type `Y` when prompted.  
+In general, you must create your own `geom.lmp` file - a file containing the information about the system under investigation (coordinates, masses, cell, ... [here](https://docs.lammps.org/Run_formats.html#data-file) the documentation) and modify the input file `input.lammps` accordingly to your system properties and simulation details. Then you run the MD simulation with  
 `$ sbatch run_lammps_mace_slurm`  
 As before, the simulation will produce a trajectory file in a standard `.xyz` format, as requested by the `dump` command in the `input.lammps` input file.
 
