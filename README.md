@@ -96,9 +96,9 @@ The `MD-LAMMPS` folder contains these scripts:
 - `run_lammps_mace_slurm`: SLURM script for launching the LAMMPS MD input file
 - `water.lmp` a file containing the cell vectors as well as the masses and coordinates of 64 water molecules in a cubic box, that you can use as a test (same as `water.xyz` used in the CP2K MD)
 
-After having created the `geom.lmp` file which is a file containing the information about the system under investigation (coordinates, masses, cell, ... [here](https://docs.lammps.org/Run_formats.html#data-file) the documentation) and after having modified the input file `input.lammps` accordingly to your system properties and simulation details, run the MD simulation with  
+Also in this case, if you are not running the test with water molecules, you must create your own `geom.lmp` file - a file containing the information about the system under investigation (coordinates, masses, cell, ... [here](https://docs.lammps.org/Run_formats.html#data-file) the documentation) and modify the input file `input.lammps` accordingly to your system properties and simulation details. Then you run the MD simulation with  
 `$ sbatch run_lammps_mace_slurm`  
-Also in this case, the simulation will produce a trajectory file in a standard `.xyz` format, as requested by the `dump` command in the `input.lammps` input file.
+As before, the simulation will produce a trajectory file in a standard `.xyz` format, as requested by the `dump` command in the `input.lammps` input file.
 
 # 2. SCF labelling
 When the MD is done, the next step is to "label" a subset of the trajectory with single point calculations to calculate DFT energies and forces. This will ultimately produce the training set that will be used by MACE to create the ML interatomic potential.   
