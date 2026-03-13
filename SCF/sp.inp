@@ -9,9 +9,9 @@
 &GLOBAL
 
   PROJECT H2O
-  RUN_TYPE ENERGY_FORCE     
-  IOLEVEL LOW       
-  WALLTIME 80000 
+  RUN_TYPE ENERGY_FORCE
+  IOLEVEL LOW
+  WALLTIME 80000
   PREFERRED_DIAG_LIBRARY  ELPA
 &END GLOBAL
 
@@ -27,7 +27,7 @@
   &DFT
 
     BASIS_SET_FILE_NAME BASIS_MOLOPT
-    POTENTIAL_FILE_NAME GTH_POTENTIALS            
+    POTENTIAL_FILE_NAME GTH_POTENTIALS
 
 
     CHARGE 0
@@ -35,40 +35,35 @@
     MULTIPLICITY 2
 
     &MGRID
-       CUTOFF [Ry] 600 
+       CUTOFF [Ry] 600
        REL_CUTOFF 60
        NGRIDS 5
     &END
 
     &QS
 
-       METHOD GPW 
-       EPS_DEFAULT 1.0E-10 
-       EXTRAPOLATION ASPC 
+       METHOD GPW
+       EPS_DEFAULT 1.0E-10
+       EXTRAPOLATION ASPC
        EXTRAPOLATION_ORDER 0
     &END
 
     !RESTART_FILE_NAME ${INPDIR}/${RESFILE}-RESTART.wfn
 
-    &SCF                              
-      MAX_SCF 1500
+   &SCF
+      IGNORE_CONVERGENCE_FAILURE
+      MAX_SCF 50
       SCF_GUESS  ${GUESS}
-      ADDED_MOS 700
-      CHOLESKY INVERSE_DBCSR
-      &SMEAR ON
-        METHOD FERMI_DIRAC
-        ELECTRONIC_TEMPERATURE [K] 300
-      &END SMEAR
-      EPS_SCF 1.0E-8 
-      &DIAGONALIZATION
-        ALGORITHM STANDARD
-        EPS_ADAPT 0.01
-      &END DIAGONALIZATION
-      &MIXING
-        METHOD BROYDEN_MIXING
-        ALPHA   0.1
-        BETA    1.5
-        NBROYDEN  8
+      EPS_SCF 1.0E-8 ! accuracy of the SCF procedure typically 1.0E-6 - 1.0E-7
+      &OT
+        ! an accurate preconditioner suitable also for larger systems
+        PRECONDITIONER FULL_SINGLE_INVERSE
+        ! the most robust choice (DIIS might sometimes be faster, but not as stable).
+        MINIMIZER CG
+      &END OT
+      &OUTER_SCF ! repeat the inner SCF cycle MAX_SCF times
+        MAX_SCF 50
+        EPS_SCF 1.0E-8 ! must match the above
       &END
 
       &PRINT
@@ -81,7 +76,6 @@
        &END
 
     &END SCF
-    
     &XC
      &VDW_POTENTIAL
        POTENTIAL_TYPE   NON_LOCAL
@@ -97,16 +91,16 @@
        &END
        &GGA_C_PBE
        &END
-      &END XC_FUNCTIONAL    
- 
+      &END XC_FUNCTIONAL
+
     &END XC
 
   &END DFT
- 
+
   ! description of the system
   &SUBSYS
 
-    &CELL 
+    &CELL
       ! unit cells that are orthorhombic are more efficient with CP2K
       ABC [angstrom] 12.42 12.42 12.42
     PERIODIC XYZ
@@ -121,11 +115,11 @@
          ELEMENT H
          POTENTIAL GTH-PBE-q1
       &END KIND
-      &TOPOLOGY 
+      &TOPOLOGY
          COORDINATE  xyz
          COORD_FILE_NAME  ${XYZ}
       &END TOPOLOGY
- 
+
   &END SUBSYS
 
 &END FORCE_EVAL
