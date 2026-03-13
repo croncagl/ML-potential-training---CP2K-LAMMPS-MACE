@@ -188,7 +188,7 @@ for i in range(num_folders):
         if writing_geoms:
             index = indices[j + conf_per_folder*i]
             config = traj[index]
-            config.set_pbc([True,True,False])
+            config.set_pbc([True,True,True])
             config.set_cell([[12.42, 0.0000, 0.0000], [0.0, 12.42, 0.0000], [0.0000,0.0000,12.42]]) #change cell accordingly
             # Apply PBC
             config.set_positions(config.get_positions(wrap=True))
