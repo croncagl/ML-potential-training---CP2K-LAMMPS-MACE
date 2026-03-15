@@ -148,11 +148,12 @@ This will create a folder named `sp_conf`, which contains a number of folders eq
    ```
 2. Adjust the number of folders and configurations in the `copy_submit.py` script, then run it with:  
 `$ python copy_submit.py`  
-3. This will put a copy of the `orig_submit_0_00.sh` file in each of the folders of `sp_conf`, and adjusts the array numbers accordingly. It also creates the `submit_all.sh` script.  
-4. Run `submit_all.sh` script with  
+3. This will put a copy of the `orig_submit_0_00.sh` file in each of the folders of `sp_conf`, and adjusts the array numbers accordingly. It also creates the `submit_all.sh` script. Run `submit_all.sh` script with  
 `$ sbatch submit_all.sh`  
 to launch all the single points at once. The single points are all launched on different nodes, there should be no issue with crashing due to memory problems.
-5. When all the SCF have been completed, use the `make_extended_mace.sh` script, also adjusting the number of folders, to automatically extract energy, coordinates, and forces from each configuration, and convert energies from Hartree to eV, and forces from Hartree/Bohr to eV/Angstrom. This file can be used as a training set, or added to the existing training set.
+4. When all the SCF have been completed, adjusti the number of folders in `make_extended_mace.sh` script, and run it with  
+`$ sbatch make_extended_mace.sh` 
+to automatically extract energy, coordinates, and forces from each configuration, and convert energies from Hartree to eV, and forces from Hartree/Bohr to eV/Angstrom. The resulting output file can be used as a training set, or added to an existing training set.
 > **Warning:** Pay attention to adjust the cell that is being used in all the files that require it: `sp.inp`, `select_configs.py`, `make_extended_mace.sh`
 
 
