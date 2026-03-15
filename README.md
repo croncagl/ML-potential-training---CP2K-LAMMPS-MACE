@@ -88,9 +88,9 @@ $ salloc -A <your_account> -C gpu -N 1 -t 00:05:00
 $ srun --pty /bin/bash
 $ uenv start --view kokkos lammps/20251210:v2
 $ source /path_to_your/my-venv-lammps-mace/bin/activate
-$ python -m mace.cli.create_lammps_model mace.model --format=mliap
+$ python -m mace.cli.create_lammps_model some_mace.model --format=mliap
 ```
-
+This script will create a `some_mace-mliap_lammps.pt` model that can be used with the following LAMMPS instructions.  
 The `MD-LAMMPS` folder contains these scripts and files:  
 - `input.lammps`: example LAMMPS input file ([here](https://docs.lammps.org/Run_formats.html#input-file) other details) for a MD simulation with a MACE potential
 - `run_lammps_mace_slurm`: SLURM script for launching the LAMMPS MD input file
