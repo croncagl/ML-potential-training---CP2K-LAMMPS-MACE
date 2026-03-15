@@ -197,7 +197,7 @@ Once the training is finished, there will be different models created. In the ex
 - h2o_stagetwo_compiled.model
 
 And similary for your training data and project name.  
-Convert the created `h20_stagetwo.model` file in the LAMMPS format, or your `your_stagetwo.model` model. To do this, exit any uenv/venv loaded on a login node, and then run these commands 
+Convert the created `h2o_stagetwo.model` file in the LAMMPS format, or your `your_stagetwo.model` model. To do this, exit any uenv/venv loaded on a login node, and then run these commands 
 ```
 $ salloc -A <your_account> -C gpu -N 1 -t 00:05:00
 $ srun --pty /bin/bash
@@ -205,7 +205,8 @@ $ uenv start --view kokkos lammps/20251210:v2
 $ source /path_to_your/my-venv-lammps-mace/bin/activate
 $ python -m mace.cli.create_lammps_model your_stagetwo.model --format=mliap
 ```
-This script will create a model `your_stagetwo.model-mliap_lammps.pt` that can be used now to run MD simulations with LAMMPS as described in section 1b).
+This script will create a model `your_stagetwo.model-mliap_lammps.pt` that can be used now to run MD simulations with LAMMPS as described in section 1b).  
+The MD simulation that will run with this model will have the desired DFT level of theory selected at stage 2), but a notably reduced computational cost.
 
 # 4. Active Learning
 - `std_max.py` is the python script which calculates the maximum standard deviation of the forces, among all atoms for each configuration, and among all models. 
