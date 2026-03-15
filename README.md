@@ -205,7 +205,7 @@ $ uenv start --view kokkos lammps/20251210:v2
 $ source /path_to_your/my-venv-lammps-mace/bin/activate
 $ python -m mace.cli.create_lammps_model your_stagetwo.model --format=mliap
 ```
-The model can be used now to run MD simulations with LAMMPS as described in section 1b).
+This script will create a model `your_stagetwo.model-mliap_lammps.pt` that can be used now to run MD simulations with LAMMPS as described in section 1b).
 
 # 4. Active Learning
 - `std_max.py` is the python script which calculates the maximum standard deviation of the forces, among all atoms for each configuration, and among all models. 
