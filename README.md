@@ -166,10 +166,9 @@ fixed_args=(
   --num_channels=256
   --max_L=2
   --train_file="h2o_training.xyz"
-  #--valid_file="val.xyz"     #either change this if you manually split your file, or use --valid_fraction for example
+  #--valid_file="val.xyz"     # either change this if you manually split your file, or use --valid_fraction
   #--test_file="test.xyz"     # same as validation
   --loss='weighted'
-  #--config_type_weights '{"slab_clean":1,"slab_term":1,"slab_CO2":1,"gas":1,"molecule":1,"finetuning":1.0,"finetuning_h2co3":0.5,"big_slab_CO2":1}'
   --energy_key='REF_energy'
   --forces_key='REF_forces'
   --E0s="average"      # better if isolated atom energies are in the training file. In this case use "isolated"
