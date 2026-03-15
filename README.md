@@ -116,8 +116,8 @@ The folder `SCF` contains the following scripts and files:
  
 The labelling must be done following these instructions:  
 
-0. Put your `.xyz` trajectory file in the `SCF` folder.
-1. Adjust borders, number of configurations, and number of folders in the `select_configs.py` script. To run it, you have (unless you already did) load the uenv and source the venv:
+0. Put your `.xyz` trajectory file in the `SCF` folder.  
+1. Adjust borders, number of configurations, and number of folders in the `select_configs.py` script. To run it, you have (unless you already did) load the uenv and source the venv:  
 ```
 $ uenv start lammps/20251210:v2 --view=kokkos
 $ source /path_to_your/my-venv-lammps-mace/bin/activate
@@ -146,13 +146,13 @@ This will create a folder named `sp_conf`, which contains a number of folders eq
 		    ├── 0149/
 		    └── submit_2_00.sh
    ```
-3. Adjust the number of folders and configurations in the `copy_submit.py` script, then run it with:
-`$ python copy_submit.py`
-4. This will put a copy of the `orig_submit_0_00.sh` file in each of the folders of `sp_conf`, and adjusts the array numbers accordingly. It also creates the `submit_all.sh` script.  
-6. Run `submit_all.sh` script with  
+2. Adjust the number of folders and configurations in the `copy_submit.py` script, then run it with:  
+`$ python copy_submit.py`  
+3. This will put a copy of the `orig_submit_0_00.sh` file in each of the folders of `sp_conf`, and adjusts the array numbers accordingly. It also creates the `submit_all.sh` script.  
+4. Run `submit_all.sh` script with  
 `$ sbatch submit_all.sh`  
 to launch all the single points at once. The single points are all launched on different nodes, there should be no issue with crashing due to memory problems.
-7. When all the SCF have been completed, use the `make_extended_mace.sh` script, also adjusting the number of folders, to automatically extract energy, coordinates, and forces from each configuration, and convert energies from Hartree to eV, and forces from Hartree/Bohr to eV/Angstrom. This file can be used as a training set, or added to the existing training set.
+5. When all the SCF have been completed, use the `make_extended_mace.sh` script, also adjusting the number of folders, to automatically extract energy, coordinates, and forces from each configuration, and convert energies from Hartree to eV, and forces from Hartree/Bohr to eV/Angstrom. This file can be used as a training set, or added to the existing training set.
 > **Warning:** Pay attention to adjust the cell that is being used in all the files that require it: `sp.inp`, `select_configs.py`, `make_extended_mace.sh`
 
 
