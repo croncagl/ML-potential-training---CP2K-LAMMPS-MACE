@@ -87,7 +87,7 @@ If you plan to use one of these models, first make sure to convert it to the rig
 $ salloc -A <your_account> -C gpu -N 1 -t 00:05:00
 $ srun --pty /bin/bash
 $ uenv start --view kokkos lammps/20251210:v2
-$ source my-venv-lammps-mace/bin/activate
+$ source /path_to_your/my-venv-lammps-mace/bin/activate
 $ python -m mace.cli.create_lammps_model mace.model --format=mliap
 ```
 
@@ -148,16 +148,63 @@ The labelling must be done following these instructions:
 
 # 3. Training
 
-Once the `make_extended_mace.sh` script has constructed the training data file, the training can start.  
-To do this, simply put your training set file in the `Training` folder, where the `run_mace.sh` script is, and run it with   
+Once the `make_extended_mace.sh` script has constructed the training data file, the training can start. 
+If you run the script with the water example, the produced training file is named `h2o_training.xyz`.
+Put this or your training set file in the `Training` folder, where the `run_mace.sh` script is.  
+This script contains the parameters that control the MACE training:  
+```
+fixed_args=(
+  --name="h2o"
+  --seed=881311935
+  --device='cuda'
+  --enable_cueq=True
+  --model='MACE'
+  --error_table='PerAtomRMSE'
+  --default_dtype='float32'
+  --num_workers=$OMP_NUM_THREADS
+  --r_max=6.0
+  --num_channels=256
+  --max_L=2
+  --train_file="h2o_training.xyz"
+  #--valid_file="val.xyz"     #either change this if you manually split your file, or use --valid_fraction for example
+  #--test_file="test.xyz"     # same as validation
+  --loss='weighted'
+  #--config_type_weights '{"slab_clean":1,"slab_term":1,"slab_CO2":1,"gas":1,"molecule":1,"finetuning":1.0,"finetuning_h2co3":0.5,"big_slab_CO2":1}'
+  --energy_key='REF_energy'
+  --forces_key='REF_forces'
+  --E0s="average"      # better if isolated atom energies are in the training file. In this case use "isolated"
+  --restart_latest
+  --distributed
+  --forces_weight=100.0
+  --energy_weight=1.0
+  --batch_size=1
+  --valid_batch_size=2
+  --lr=0.01
+  --max_num_epochs=100
+  --eval_interval=1
+  --swa
+  --swa_lr=0.001
+  --start_swa=75
+)
+
+```
+start the training with:     
 `$ sbatch run_mace.sh`  
-Once the training is finished, convert the created `.model` file in the LAMMPS format. To do this, exit any uenv/venv loaded on a login node, and then run these commands 
+Once the training is finished, there will be different models created. In the example of water you will find:  
+
+- h2o.model
+- h2o_compiled.model
+- h2o_stagetwo.model
+- h2o_stagetwo_compiled.model
+
+And similary for your training data and project name.  
+Convert the created `h20_stagetwo.model` file in the LAMMPS format, or your `your_stagetwo.model` model. To do this, exit any uenv/venv loaded on a login node, and then run these commands 
 ```
 $ salloc -A <your_account> -C gpu -N 1 -t 00:05:00
 $ srun --pty /bin/bash
 $ uenv start --view kokkos lammps/20251210:v2
-$ source my-venv-lammps-mace/bin/activate
-$ python -m mace.cli.create_lammps_model mace.model --format=mliap
+$ source /path_to_your/my-venv-lammps-mace/bin/activate
+$ python -m mace.cli.create_lammps_model your_stagetwo.model --format=mliap
 ```
 The model can be used now to run MD simulations with LAMMPS as described in section 1b).
 
