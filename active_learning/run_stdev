@@ -1,15 +1,17 @@
 #!/bin/bash -l
-#SBATCH --job-name=mace-train-test
+#SBATCH --job-name=run_stdev
 #SBATCH --output=mace_train_%j.out
 #SBATCH --error=mace_train_%j.err
-#SBATCH --partition=normal
-#SBATCH --account=lp83
+#SBATCH --partition=debug
+#SBATCH --account=your_account
 #SBATCH --nodes=1
 #SBATCH --gres=gpu:4
 #SBATCH --ntasks-per-node=4
 #SBATCH --cpus-per-task=72
 #SBATCH --time=0:30:00
 #SBATCH --hint=nomultithread
+#SBATCH --uenv=lammps/20251210:v2
+#SBATCH --view=kokkos
 
 # PyTorch DDP env
 export MASTER_ADDR=$(hostname)
@@ -30,8 +32,6 @@ export FI_CXI_RX_MATCH_MODE=software
 
 cd "$SLURM_SUBMIT_DIR"
 
-srun --cpus-per-task=$SLURM_CPUS_PER_TASK --environment=lammps-mace-kokkos python3 std_max.py > output_std.dat
+source /path_to_your/my-test-venv-lammps-mace/bin/activate
+srun --cpus-per-task=$SLURM_CPUS_PER_TASK /path_to_your/my-test-venv-lammps-mace/bin/python std_max.py > output_std.dat
 wait
-
-awk {'print $3'} model_devi.log > model_devi.out
-
