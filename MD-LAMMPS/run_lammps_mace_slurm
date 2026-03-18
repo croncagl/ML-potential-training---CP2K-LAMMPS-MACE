@@ -14,7 +14,6 @@ export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
 ulimit -s unlimited
 
 srun bash -c "
-source ./my-venv-lammps-mace/bin/activate  # change here if you have another venv name!!!
-export PYTHONPATH=/path_to_your_venv-lammps-mace/lib/python3.11/site-packages:\$PYTHONPATH    # CHANGE PATH HERE, AND CHECK WITH  ls /path_to_your_venv-lammps-mace/lib/ WHICH PYTHON VERSION (3.11, ...)
+source /path_to_your/my-venv-lammps-mace/bin/activate
 lmp -k on g 1 -sf kk -pk kokkos gpu/aware on newton on neigh half -in input.lammps -log my_log.log
 "
