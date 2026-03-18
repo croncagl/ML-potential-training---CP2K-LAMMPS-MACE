@@ -18,8 +18,6 @@ export MPICH_GPU_SUPPORT_ENABLED=1
 export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
 ulimit -s unlimited
 
-source /path_to_your/venv-lammps-mace-cp2k/bin/activate  #change here
-
 fixed_args=(
   --name="h2o"
   --seed=881311935
