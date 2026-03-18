@@ -18,7 +18,7 @@ export MPICH_GPU_SUPPORT_ENABLED=1
 export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
 ulimit -s unlimited
 
-source /path_to_your/my-venv-lammps-mace/bin/activate  #change here
+source /path_to_your/venv-lammps-mace-cp2k/bin/activate  #change here
 
 fixed_args=(
   --name="h2o"
@@ -54,7 +54,7 @@ fixed_args=(
 )
 
 echo "Running training..."
-srun env LOCAL_RANK=0 SLURM_LOCALID=0 /path_to_your/my-venv-lammps-mace/bin/python -m mace.cli.run_train "${fixed_args[@]}" &
+srun env LOCAL_RANK=0 SLURM_LOCALID=0 /path_to_your/venv-lammps-mace-cp2k/bin/python -m mace.cli.run_train "${fixed_args[@]}" &
 wait
 
 deactivate
