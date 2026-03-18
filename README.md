@@ -260,10 +260,18 @@ fixed_args=(
 --foundation_model "path_to_your/mace.model" 
 --pt_train_file "path_to_your_original_training_data.xyz" 
 --multiheads_finetuning True
+--E0s="{1: -188.0294448423205, 8: -94.01472242116016}"  # values relative to H and O for the water example
 ...
 )
 ```
-where `geom_all_relabelled.xyz`is the output of `make_extended_mace.sh` of section 2) on the new `geom_all.xyz`labelled data and `mace.model` is your MACE model trained previously in section 3).   
+where `geom_all_relabelled.xyz`is the output of `make_extended_mace.sh` of section 2) on the new `geom_all.xyz`labelled data and `mace.model` is your MACE model trained previously in section 3). Note that we have now to specify `E0s` values, since multihead fine-tuning does not support "average". These values can be found in the output of the first training, in a line such as  
+```
+...
+INFO: Isolated Atomic Energies (E0s) not in training file, using command line argument
+INFO: Computing average Atomic Energies using least squares regression
+INFO: Atomic Energies used (z: eV) for head Default: {1: -188.0294448423205, 8: -94.01472242116016}
+...
+```
 More info about the multihead replay fine-tuning of MACE can be found [here](https://mace-docs.readthedocs.io/en/latest/guide/multihead_finetuning.html).
 
 The fine-tuning procedure can be done again four times to create a committee of four fine-tuned model, from which another histogram of maximum force deviation can be calculated. In case of successfull active-learning, the new histrogram should shrink and move to the left (smaller values of deviation) with respect to the first one.  
