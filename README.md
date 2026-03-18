@@ -200,6 +200,7 @@ fixed_args=(
 ```
 start the training with:     
 `$ sbatch run_mace.sh`  
+This particular setting will run first 75 epochs with learning rate equal to 0.01 and then the last 25 epochs with a reduced learning rate equal to 0.001. Also, during these last 25 epochs, the weight of the energy error in the loss is increased. The training is therefore split in two "stages".  
 Once the training is finished, there will be different models created. In the example of water you will find:  
 
 - `h2o.model`
@@ -217,12 +218,29 @@ $ source /path_to_your/my-venv-lammps-mace/bin/activate
 $ python -m mace.cli.create_lammps_model your_stagetwo.model --format=mliap
 ```
 This script will create a model `your_stagetwo.model-mliap_lammps.pt` that can be used now to run MD simulations with LAMMPS as described in section 1b).  
+
 The MD simulation that will run with this model will have the desired DFT level of theory selected at stage 2), but a notably reduced computational cost.
 
 # 4. Active Learning
+ML interatomic potentials are subject to errors that come mainly from two sources: insufficient sampling of configuration space and inaccurate fit on training data. Active learning tries to compensate the first error. Here we implement active learning by query of committee of models, as described [here](https://www.nature.com/articles/s41929-023-01006-2).  
+The idea is to first train four different models on the same training set (using different seeds), as described in section 3), by only changing  `--name="h2o_i"` for different `i` and `--seed=881311935` to four different values. Then run a molecular dynamics simulation using one of them. Once the simulation is finished, the other three potentials evaluate the configurations
+that have been produced, i.e. the models calculate energy and forces starting from the atomic coordinates in the trajectory. Finally, an histogram of maximum force deviation is built and a subset of the trajectory is sampled in a region of uncertainity, so that a new training set is created to further train and improve the quality of the ML potential. In other words, the new training set will contain configurations where the four potentials "do not agree" on forces estimation. This new training set will be labelled again by DFT calculation as described in section 2) so that it will be ready to be used as a new training set.
+
+The `ACTIVE_LEARNING` folder contains the following scripts:  
+
 - `std_max.py` is the python script which calculates the maximum standard deviation of the forces, among all atoms for each configuration, and among all models. 
 - `run_stdev` is the SLURM script to run the `std_max.py` script
 - `conf_selection.ipynb` is a Jupyter notebook template to analyze the maximum standard deviation histograms, and select a number of configurations based on standard deviation.
 
-To do active learning, create a committee of 4 models, using the same training set but different seed, then run a molecular dynamics simulation using one of them.
-Insert the path to each model in the `std_max.py` script, along with the path to the trajectory (in `.xyz` format), then sbatch `run_stdev`. After the job is completed, put the trajectory and the file `model_devi.out` that has been produced in a folder, and use the `conf_selection.ipynb` notebook to analyze the force deviation histogram.
+Insert the path to each model in the `std_max.py` script, along with the path to the trajectory (in `.xyz` format), then run
+`$ sbatch run_stdev`  
+After this job is completed, you can run the `conf_selection.ipynb` notebook locally.  
+Create a folder and put there the trajectory `.xyz` and the file `model_devi_summary.out` that has been produced by `std_max.py`. Put the path of this folder (in this example named ACTIVE_LEARNING_DATA) in the notebook, in the third cell  
+```
+folders = {
+    "my_unique_dataset": "/path_to_some/ACTIVE_LEARNING_DATA"
+}
+```
+and use the notebook to analyze the force deviation histogram. This will create an histogram such as this one:
+
+
