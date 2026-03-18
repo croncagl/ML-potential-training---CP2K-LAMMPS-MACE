@@ -52,7 +52,4 @@ fixed_args=(
 )
 
 echo "Running training..."
-srun env LOCAL_RANK=0 SLURM_LOCALID=0 /path_to_your/venv-lammps-mace-cp2k/bin/python -m mace.cli.run_train "${fixed_args[@]}" &
-wait
-
-deactivate
+srun env LOCAL_RANK=0 SLURM_LOCALID=0 /path_to_your/venv-lammps-mace-cp2k/bin/python -m mace.cli.run_train "${fixed_args[@]}"
