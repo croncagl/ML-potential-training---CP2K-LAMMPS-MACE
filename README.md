@@ -33,7 +33,7 @@ To train a ML interatomic potential on a DFT-labeled MD trajectory, these steps 
 1) MD simulation
 2) SCF labelling
 3) Training
-4) Active Learning
+4) Active Learning & Fine-tuning
 
 # 1. MD simulation
 
