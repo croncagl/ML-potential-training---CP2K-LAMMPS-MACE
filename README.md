@@ -243,7 +243,7 @@ folders = {
 ```
 and use the notebook to analyze the force deviation histogram. This will create an histogram such as this one:
 <img src="Images/output.png" alt="Maximum Force Deviation Histogram" width="75%">  
-the histogram is divided in five regions by four vertical lines, corresponing to specific values of force deviations, as described [here](https://www.nature.com/articles/s41929-023-01006-2). The first region is discarded as contains configurations where the models well agree between each other, and the last region is also discarded as containing high force deviation (usually denoted as non-physical configuration, but check carefully as it depends ultimately on the value on the x-axis). 
+the histogram is divided in five regions by four vertical lines, corresponing to specific values of force deviations, as described [here](https://www.nature.com/articles/s41929-023-01006-2). The first region (from left to right) is discarded as contains configurations where the models well agree between each other, and the last region is also discarded as containing high force deviation (usually denoted as non-physical configuration, but check carefully as it depends ultimately on the value on the x-axis). 
 
 The notebook will sample randomly an integer number (defined by the user in the notebook) of configurations in the remaining three intervals. These are collected separately in three different `.xyz`files (useful for inspection). The file containing all the new configuration is the `geom_all.xyz`file. This has to be used as a new "trajectory" to label as described in step 2).
 
