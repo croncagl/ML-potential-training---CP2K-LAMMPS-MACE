@@ -6,16 +6,21 @@ This repository contains a suite of codes to train a Machine Learning potential 
 
 The installation steps reported here partially refer to the [Alps](https://docs.cscs.ch/alps/) infrastructure of CSCS. You will have to change accordingly to your needs.
 
+- Repository codes: Move to a safe permament folder (such as `$STORE` or `$HOME`) and type
+  ```
+  $ git clone https://github.com/croncagl/ML-potential-training---CP2K-LAMMPS-MACE.git
+  $ cd ML-potential-training---CP2K-LAMMPS-MACE
+  ```
 - CP2K: the software is already available on Alps via uenv. You can find CP2K images with the command `$ uenv image find cp2k` and then pull the latest (as per now 2026.1:v1) image via the command  
   `$ uenv image pull cp2k/2026.1:v1`  
-After, download the `mps-wrapper.sh` script available [here](https://docs.cscs.ch/running/slurm/#multiple-ranks-per-gpu) and place it in a safe permanent folder.
+After, download the `mps-wrapper.sh` script available [here](https://docs.cscs.ch/running/slurm/#multiple-ranks-per-gpu) and place it in the repository folder.
   More information about CP2K on Alps can be found on this [page](https://docs.cscs.ch/software/sciapps/cp2k/).
-- LAMMPS+MACE: Following the section "LAMMPS with MACE" at the end of this [page](https://docs.cscs.ch/software/sciapps/lammps/#lammps-ml-iap-using-lammps-with-machine-learning-interatomic-potentials), you will have to create a dedicated virtual environment. Move to a safe and permament directory (such as `$STORE` or `$HOME`) and run the following commands:
+- LAMMPS+MACE: Following the section "LAMMPS with MACE" at the end of this [page](https://docs.cscs.ch/software/sciapps/lammps/#lammps-ml-iap-using-lammps-with-machine-learning-interatomic-potentials), you will have to create a dedicated virtual environment. To do so, in repository folder run the following commands:
   ```
   $ uenv image pull lammps/20251210:v2
   $ uenv start --view kokkos lammps/20251210:v2
-  $ python -m venv --system-site-packages my-venv-lammps-mace  #change name here if you want and accordingly eveywhere else in the scripts
-  $ source my-venv-lammps-mace/bin/activate
+  $ python -m venv --system-site-packages venv-lammps-mace-cp2k 
+  $ source ./venv-lammps-mace-cp2k/bin/activate
   $ pip install --upgrade pip
   $ pip install torch --index-url https://download.pytorch.org/whl/cu129
   $ pip install mace-torch cuequivariance-torch cuequivariance cuequivariance-ops-torch-cu12 cupy-cuda12x p7zip-full
@@ -87,7 +92,7 @@ If you plan to use one of these models, first make sure to convert it to the rig
 $ salloc -A <your_account> -C gpu -N 1 -t 00:05:00
 $ srun --pty /bin/bash
 $ uenv start --view kokkos lammps/20251210:v2
-$ source /path_to_your/my-venv-lammps-mace/bin/activate
+$ source /path_to_your/venv-lammps-mace-cp2k/bin/activate
 $ python -m mace.cli.create_lammps_model some_mace.model --format=mliap
 ```
 This script will create a `some_mace-mliap_lammps.pt` model that can be used with the following LAMMPS instructions.  
@@ -120,7 +125,7 @@ The labelling must be done following these instructions:
 1. Adjust borders, number of configurations, and number of folders in the `select_configs.py` script. To run it, you have (unless you already did) load the uenv and source the venv:  
 ```
 $ uenv start lammps/20251210:v2 --view=kokkos
-$ source /path_to_your/my-venv-lammps-mace/bin/activate
+$ source /path_to_your/venv-lammps-mace-cp2k/bin/activate
 $ python select_configs.py
 ```
 This will create a folder named `sp_conf`, which contains a number of folders equal to that specified in the script, each containing the same number of subfolders. Each subfolder, numbered progressively from 0000 to the total number, contains the `.xyz` file of the randomly extracted configuration and a copy of the `sp.inp` file. 
@@ -214,7 +219,7 @@ Convert the created `h2o_stagetwo.model` file in the LAMMPS format, or your `you
 $ salloc -A <your_account> -C gpu -N 1 -t 00:05:00
 $ srun --pty /bin/bash
 $ uenv start --view kokkos lammps/20251210:v2
-$ source /path_to_your/my-venv-lammps-mace/bin/activate
+$ source /path_to_your/venv-lammps-mace-cp2k/bin/activate
 $ python -m mace.cli.create_lammps_model your_stagetwo.model --format=mliap
 ```
 This script will create a model `your_stagetwo.model-mliap_lammps.pt` that can be used now to run MD simulations with LAMMPS as described in section 1b).  
