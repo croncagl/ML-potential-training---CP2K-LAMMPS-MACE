@@ -161,7 +161,7 @@ to automatically extract energy, coordinates, and forces from each configuration
 
 Once the `make_extended_mace.sh` script has constructed the training data file, the training can start. 
 If you run the script with the water example, the produced training file is named `h2o_training.xyz`.
-Put this or your training set file in the `Training` folder, where the `run_mace.sh` script is.  
+Put this or your training set file in the `TRAINING` folder, where the `run_mace.sh` script is.  
 This script contains the parameters that control the MACE training:  
 ```
 fixed_args=(
@@ -221,7 +221,7 @@ This script will create a model `your_stagetwo.model-mliap_lammps.pt` that can b
 
 The MD simulation that will run with this model will have the desired DFT level of theory selected at stage 2), but a notably reduced computational cost.
 
-# 4. Active Learning
+# 4. Active Learning and Fine-tuning
 ML interatomic potentials are subject to errors that come mainly from two sources: insufficient sampling of configuration space and inaccurate fit on training data. Active learning tries to compensate the first error. Here we implement active learning by query of committee of models, as described [here](https://www.nature.com/articles/s41929-023-01006-2).  
 The idea is to first train four different models on the same training set (using different seeds), as described in section 3), by only changing  `--name="h2o_i"` for different `i` and `--seed=881311935` to four different values. Then run a molecular dynamics simulation using one of them. Once the simulation is finished, the other three potentials evaluate the configurations
 that have been produced, i.e. the models calculate energy and forces starting from the atomic coordinates in the trajectory. Finally, an histogram of maximum force deviation is built and a subset of the trajectory is sampled in a region of uncertainity, so that a new training set is created to further train and improve the quality of the ML potential. In other words, the new training set will contain configurations where the four potentials "do not agree" on forces estimation. This new training set will be labelled again by DFT calculation as described in section 2) so that it will be ready to be used as a new training set.
@@ -242,5 +242,27 @@ folders = {
 }
 ```
 and use the notebook to analyze the force deviation histogram. This will create an histogram such as this one:
+<img src="Images/output.png" alt="Maximum Force Deviation Histogram" width="75%">
+the histogram is divided in five regions by four vertical lines, corresponing to specific values of force deviations, as described [here](https://www.nature.com/articles/s41929-023-01006-2). The first region is discarded as contains configurations where the models well agree between each other, and the last region is also discarded as containing high force deviation (usually denoted as non-physical configuration, but check carefully as it depends ultimately on the value on the x-axis). 
+
+The notebook will sample randomly an integer number (defined by the user in the notebook) of configurations in the remaining three intervals. These are collected separately in three different `.xyz`files (useful for inspection). The file containing all the new configuration is the `geom_all.xyz`file. This has to be used as a new "trajectory" to label as described in step 2).
+
+Finally, once this new set configurations have been relabelled, the original model can be trained again. In particular, MACE supports the multihead replay fine-tuning, so that the new model will not forget what already learned in the past. To do so, simply modify the MACE training arguments as shown here:  
+```
+fixed_args=(
+--name "mace_model_finetuned" 
+--train_file "path_to_your/geom_all_relabelled.xyz" 
+--foundation_model "path_to_your/mace.model" 
+--pt_train_file "path_to_your_original_training_data.xyz" 
+--multiheads_finetuning True
+...
+)
+```
+where `geom_all_relabelled.xyz`is the output of `make_extended_mace.sh` of section 2) on the new `geom_all.xyz`labelled data and `mace.model` is your MACE model trained previously in section 3).   
+More info about the multihead replay fine-tuning of MACE can be found [here](https://mace-docs.readthedocs.io/en/latest/guide/multihead_finetuning.html).
+
+The fine-tuning procedure can be done again four times to create a committee of four fine-tuned model, from which another histogram of maximum force deviation can be calculated. In case of successfull active-learning, the new histrogram should shrink and move to the left (smaller values of deviation) with respect to the first one.  
+This corresponds to a first cycle of active learning. The user may repeat other active learning cycles, including specific ill-behaving dynamics, depending on specific needs.
+
 
 
